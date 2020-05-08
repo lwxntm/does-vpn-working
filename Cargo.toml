@@ -1,0 +1,24 @@
+[package]
+name = "does-vpn-working"
+version = "0.1.0"
+authors = ["xiaotian"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "2.0.0"
+actix-rt = "1.1.1"
+env_logger = "0.7.1"
+actix-files = "0.2.1"
+
+# add from zhihu
+log ="0.4.8"
+chrono = "0.4.11"
+
+#我们使用了failure库来辅助错误处理以及serde库对请求应答进行序列化
+serde = { version = "1.0.106", features = ["derive"] }
+serde_json = "1.0"
+failure = "0.1.8"
+
+reqwest={version="0.10.4",features=["blocking","json"]}
