@@ -35,7 +35,7 @@ async fn handle_ip(req: HttpRequest) -> impl Responder {
         "Hello {}!\n\
     Your are from {}\n\
     Your IP is {}\n\
-    Your ISP is ",
+    Your ISP is {}",
         &name, &ip.country, &ip.ip, &ip.isp
     )
 }
