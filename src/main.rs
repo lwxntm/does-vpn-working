@@ -11,12 +11,22 @@ mod ip;
 async fn main() -> std::io::Result<()> {
     init_logger();
     info!("Hello, world");
+
+    let addr: String;
+    let args: Vec<String> = std::env::args().collect();
+    println!("{:#?}", args);
+    if args.len() > 1 {
+        addr = format!("0.0.0.0:{}", args[1]);
+    } else {
+        addr = "0.0.0.0:13852".to_string();
+    }
+
     HttpServer::new(|| {
         App::new()
             .route("/", web::get().to(handle_ip))
             .route("/{name}", web::get().to(handle_ip))
     })
-    .bind("0.0.0.0:13852")?
+    .bind(addr)?
     .run()
     .await
 }
@@ -24,12 +34,13 @@ async fn main() -> std::io::Result<()> {
 async fn handle_ip(req: HttpRequest) -> impl Responder {
     let ip_string = req.peer_addr().unwrap().ip().to_string();
     let url = format!("https://api.ip.sb/geoip/{}", ip_string);
-    let ip: ip::Ip = reqwest::get(url.as_str())
+    let ip: Ip = reqwest::get(url.as_str())
         .await
         .unwrap()
         .json::<Ip>()
         .await
         .unwrap();
+    info!("a new client from {}", &ip.ip);
     let name = req.match_info().get("name").unwrap_or("World");
     format!(
         "Hello {}!\n\
@@ -38,14 +49,6 @@ async fn handle_ip(req: HttpRequest) -> impl Responder {
     Your ISP is {}",
         &name, &ip.country, &ip.ip, &ip.isp
     )
-}
-
-#[test]
-fn t() {
-    let body: reqwest::blocking::Response =
-        reqwest::blocking::get("https://www.rust-lang.org").unwrap();
-
-    println!("body = {:?}", body);
 }
 
 fn init_logger() {

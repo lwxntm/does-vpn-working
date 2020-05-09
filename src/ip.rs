@@ -1,24 +1,19 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub(crate) struct Ip {
+    #[serde(default = "default_field")]
     pub organization: String,
+    #[serde(default = "default_field")]
     pub isp: String,
-    #[serde(default = "default_city")]
+    #[serde(default = "default_field")]
     pub city: String,
+    #[serde(default = "default_field")]
     pub country: String,
+    #[serde(default = "default_field")]
     pub ip: String,
 }
 
-fn default_city() -> String {
+fn default_field() -> String {
     "~".to_string()
-}
-
-#[test]
-fn t() {
-    let json: Ip = reqwest::blocking::get("https://api.ip.sb/geoip/185.209.84.53")
-        .unwrap()
-        .json()
-        .unwrap();
-    println!("{}", json.ip);
 }
