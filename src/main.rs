@@ -14,7 +14,6 @@ async fn main() -> std::io::Result<()> {
 
     let addr: String;
     let args: Vec<String> = std::env::args().collect();
-    println!("{:#?}", args);
     if args.len() > 1 {
         addr = format!("0.0.0.0:{}", args[1]);
     } else {
