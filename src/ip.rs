@@ -4,11 +4,14 @@ use serde::{Deserialize, Serialize};
 pub(crate) struct Ip {
     pub organization: String,
     pub isp: String,
-    #[serde(default)]
-    #[serde(with = "date_serde")]
+    #[serde(default = "default_city")]
     pub city: String,
     pub country: String,
     pub ip: String,
+}
+
+fn default_city() -> String {
+    "~".to_string()
 }
 
 #[test]
