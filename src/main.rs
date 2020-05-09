@@ -2,6 +2,7 @@
 use actix_web::{App, HttpRequest, HttpServer, Responder, web};
 // log
 use log::info;
+use crate::ip::Ip;
 
 mod ip;
 
@@ -9,8 +10,6 @@ mod ip;
 async fn main() -> std::io::Result<()> {
     init_logger();
     info!("Hello, world");
-
-
     HttpServer::new(|| {
         App::new()
             .route("/", web::get().to(handle_ip))
@@ -23,12 +22,12 @@ async fn main() -> std::io::Result<()> {
 
 async fn handle_ip(req: HttpRequest) -> impl Responder {
     let ip_string = req.peer_addr().unwrap().ip().to_string();
-    let url = format!("https://api.ip.sb/geoip/{}", ip_string);
-    let json: ip::Ip = reqwest::blocking::get(url.as_str()).unwrap().json().unwrap();
+    // let url = format!("https://api.ip.sb/geoip/{}", ip_string);
+    let url ="https://api.ip.sb/geoip/185.209.84.53";
+    let ip:ip::Ip=reqwest::get(url).await.unwrap().json::<Ip>().await.unwrap();
+    println!("{}",ip.country);
     let name = req.match_info().get("name").unwrap_or("World");
-    format!("Hello {}!\nYou are from {}!\n\
-    Country: {}\n\
-    ISP: {}", &name, &json.ip, &json.country, &json.isp)
+    format!("Hello {}!Your are from {}", &name,&ip.country)
 }
 
 #[test]
