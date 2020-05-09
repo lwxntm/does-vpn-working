@@ -2,6 +2,7 @@
 use actix_web::{App, HttpRequest, HttpServer, Responder, web};
 // log
 use log::info;
+
 use crate::ip::Ip;
 
 mod ip;
@@ -22,12 +23,14 @@ async fn main() -> std::io::Result<()> {
 
 async fn handle_ip(req: HttpRequest) -> impl Responder {
     let ip_string = req.peer_addr().unwrap().ip().to_string();
-    // let url = format!("https://api.ip.sb/geoip/{}", ip_string);
-    let url ="https://api.ip.sb/geoip/185.209.84.53";
-    let ip:ip::Ip=reqwest::get(url).await.unwrap().json::<Ip>().await.unwrap();
-    println!("{}",ip.country);
+    let url = format!("https://api.ip.sb/geoip/{}", ip_string);
+    let ip: ip::Ip = reqwest::get(url.as_str()).await.unwrap().json::<Ip>().await.unwrap();
+    println!("{}", ip.country);
     let name = req.match_info().get("name").unwrap_or("World");
-    format!("Hello {}!Your are from {}", &name,&ip.country)
+    format!("Hello {}!\n\
+    Your are from {}\n\
+    Your IP is {}\n\
+    Your ISP is ", &name, &ip.country, &ip.ip, &ip.isp)
 }
 
 #[test]
