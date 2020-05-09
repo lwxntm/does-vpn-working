@@ -1,5 +1,5 @@
 // from actix-web
-use actix_web::{App, HttpRequest, HttpServer, Responder, web};
+use actix_web::{web, App, HttpRequest, HttpServer, Responder};
 // log
 use log::info;
 
@@ -16,26 +16,34 @@ async fn main() -> std::io::Result<()> {
             .route("/", web::get().to(handle_ip))
             .route("/{name}", web::get().to(handle_ip))
     })
-        .bind("0.0.0.0:13852")?
-        .run()
-        .await
+    .bind("0.0.0.0:13852")?
+    .run()
+    .await
 }
 
 async fn handle_ip(req: HttpRequest) -> impl Responder {
     let ip_string = req.peer_addr().unwrap().ip().to_string();
     let url = format!("https://api.ip.sb/geoip/{}", ip_string);
-    let ip: ip::Ip = reqwest::get(url.as_str()).await.unwrap().json::<Ip>().await.unwrap();
-    println!("{}", ip.country);
+    let ip: ip::Ip = reqwest::get(url.as_str())
+        .await
+        .unwrap()
+        .json::<Ip>()
+        .await
+        .unwrap();
     let name = req.match_info().get("name").unwrap_or("World");
-    format!("Hello {}!\n\
+    format!(
+        "Hello {}!\n\
     Your are from {}\n\
     Your IP is {}\n\
-    Your ISP is ", &name, &ip.country, &ip.ip, &ip.isp)
+    Your ISP is ",
+        &name, &ip.country, &ip.ip, &ip.isp
+    )
 }
 
 #[test]
 fn t() {
-    let body: reqwest::blocking::Response = reqwest::blocking::get("https://www.rust-lang.org").unwrap();
+    let body: reqwest::blocking::Response =
+        reqwest::blocking::get("https://www.rust-lang.org").unwrap();
 
     println!("body = {:?}", body);
 }
@@ -44,8 +52,7 @@ fn init_logger() {
     use chrono::Local;
     use std::io::Write;
 
-    let env = env_logger::Env::default()
-        .filter_or(env_logger::DEFAULT_FILTER_ENV, "info");
+    let env = env_logger::Env::default().filter_or(env_logger::DEFAULT_FILTER_ENV, "info");
     // 设置日志打印格式
     env_logger::Builder::from_env(env)
         .format(|buf, record| {

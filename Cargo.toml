@@ -23,8 +23,3 @@ failure = "0.1.8"
 
 reqwest={version="0.10.4",features=["blocking","json"]}
 
-
-[raze.crates.indexmap.'1.3.0']
-additional_flags = [
-    "--cfg=has_std"
-]
